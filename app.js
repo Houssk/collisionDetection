@@ -145,28 +145,34 @@ function update()
     if ( keyboard.pressed("up") )
     {
 
-        console.log(MovingCube.material.color);
+        console.log(MovingCube.material.color.setHex(0xE3DAC9));
+        detectionText("");
+        clearText();
         MovingCube.material.color.setHex(0xE3DAC9);
         wall.material.color.setHex(0xE3DAC9);
         MovingCube.position.y += moveDistance;
+        NewPoint = MovingCube.position.clone();
         cptUp = cptUp - 1;
         cptAffichage = cptDown + cptUp;
         cptRes = cptUp;
-        computeCollision();
+        computeCollision(NewPoint);
         console.log(MovingCube.material.color);
     }
 
 
     if ( keyboard.pressed("down") )
     {
-        console.log(MovingCube.material.color);
+        detectionText("");
+        clearText();
+        console.log(MovingCube.material.color.setHex(0xE3DAC9));
         MovingCube.material.color.setHex(0xE3DAC9);
         wall.material.color.setHex(0xE3DAC9);
         MovingCube.position.y -= moveDistance;
+        NewPoint = MovingCube.position.clone();
         cptDown = cptDown + 1;
         cptAffichage = cptDown +cptUp;
         cptRes = cptDown;
-        computeCollision();
+        computeCollision(NewPoint);
         console.log(MovingCube.material.color);
 
     }
@@ -176,10 +182,9 @@ function update()
         location.reload(); // recharge la page
     }
 }
-function computeCollision() {
-    NewPoint = MovingCube.position.clone();
-    detectionText("");
-    clearText();
+function computeCollision(NewPoint) {
+
+
     for (var vertexIndex = 0; vertexIndex < cubeGeometry.vertices.length; vertexIndex++) {
         appendText((cptAffichage * 0.1).toFixed(1) + " mm");
         var localVertex = cubeGeometry.vertices[vertexIndex].clone();
@@ -191,6 +196,12 @@ function computeCollision() {
             detectionText(" Collision Detected ");
             MovingCube.material.color.setHex(0xFF0000);
             wall.material.color.setHex(0x00FF00);
+            if(MovingCube.position.y == -0.5){
+                MovingCube.material.color.setHex(0xE3DAC9);
+                wall.material.color.setHex(0xE3DAC9);
+                detectionText("");
+                clearText();
+            }
         }
     }
 }
