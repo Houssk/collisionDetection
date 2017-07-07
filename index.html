@@ -1,0 +1,302 @@
+<html>
+<head>
+	<title>Collision Detection (Three.js)</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel=stylesheet href="css/base.css"/>
+</head>
+<body>
+
+<div id="message"></div>
+<div id="message2"></div>
+
+<script src="js/Three.js"></script>
+<script src="js/Detector.js"></script>
+<script src="js/Stats.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/THREEx.KeyboardState.js"></script>
+<script src="js/THREEx.FullScreen.js"></script>
+<script src="js/THREEx.WindowResize.js"></script>
+<script src="js/OBJLoader.js"></script>
+<script src="js/TrackballControls.js"></script>
+
+<div id="ThreeJS" style="z-index: 2;"></div>
+<script>
+
+// MAIN
+
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
+
+// custom global variables
+
+var MovingCube;// objet en mouvement
+var NewMovingCube;// variable test pour le changement de texture de l'objet en mouvement
+var wall; // objet fixe
+var collidableMeshList = [];
+
+var geometry ; // géométrie objet fixe
+var material;// texture objet fixe
+
+var cubeGeometry; // géométrie objet en mouvement
+var wireMaterial;// texture objet en mouvement
+
+var arrowList = [];
+var directionList = [];
+
+var NewPoint;// variable qui garde en mémoire la position de l'objet en mouvement après avoir détecter une collision
+var NewWall;
+var NewMovingCube;
+var res =0;
+
+var cptUp =0;
+var cptDown =0;
+var cptAffichage =0;// sert à compter le nombre de déplacement des objets 3D => Calcul du déplacement en mm
+var cptRes = 0;
+
+init();
+animate();
+
+// FUNCTIONS 		
+function init() 
+{
+	// SCENE
+	scene = new THREE.Scene();
+	// CAMERA
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 1, FAR = 1000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+
+	scene.add(camera);
+	camera.position.set(0,100,200);
+	camera.lookAt(scene.position);	
+
+	renderer = new THREE.WebGLRenderer( {antialias:true} );
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setClearColor( 0xffffff, 1 );
+	renderer.gammaInput = true;
+	renderer.gammaOutput = true;
+	container = document.getElementById( "ThreeJS" );
+	container.appendChild( renderer.domElement );
+
+	// EVENTS
+	THREEx.WindowResize(renderer, camera);
+	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+
+	// CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+	// STATS
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.bottom = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild( stats.domElement );
+
+	// LIGHT
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(0,250,500);
+	scene.add(light);
+
+
+ 	var loader2 = new THREE.OBJLoader();
+	var cheminMaxillaire="maxillaire3.obj";
+	loader2.load(cheminMaxillaire,function(object){
+            object.traverse(function(child){
+                	if(child instanceof THREE.Mesh){
+						cubeGeometry = new THREE.Geometry().fromBufferGeometry(child.geometry);
+						wireMaterial = new THREE.MeshPhongMaterial( { color: 0xE3DAC9});
+						MovingCube = new THREE.Mesh( cubeGeometry, wireMaterial );
+						scene.add( MovingCube );	
+					}
+	  		})
+            
+        });
+	
+	var loader = new THREE.OBJLoader();
+    var cheminMand= "mandibule3.obj"; 
+	loader.load(cheminMand,function(object){
+            object.traverse(function(child){
+                	if(child instanceof THREE.Mesh){
+                        geometry = new THREE.Geometry().fromBufferGeometry(child.geometry);
+                        material = new THREE.MeshPhongMaterial({ color: 0xE3DAC9});//, wireframe:true});
+                        wall = new THREE.Mesh(geometry,material);
+						wall.position.set(0, -5, 0);
+                        scene.add(wall);
+						collidableMeshList.push(wall); // permet de garder en mémoire l'objet qui ne doit pas rentrer en collision avec l'objet en mouvement.
+					}
+			})
+	});
+}
+
+function clearText()
+{   document.getElementById('message').innerHTML = '..........';   }
+
+function appendText(txt)
+{   document.getElementById('message').innerHTML = txt;   }
+
+function detectionText(txt)
+{   document.getElementById('message2').innerHTML = txt; }
+
+
+function animate() 
+{
+    requestAnimationFrame( animate );
+	render();		
+	update();
+}
+
+function collisionColor()
+{
+			scene.remove(MovingCube);
+			scene.remove(wall);
+			wireMaterial = new THREE.MeshPhongMaterial( { color: 0xFF0000});
+			wireMaterial.needsUpdate = true;
+			MovingCube =new THREE.Mesh( cubeGeometry, wireMaterial );
+			var collision = MovingCube.position.add(NewPoint); //variable qui enregistre le déplacement de l'objet en mouvement.
+			//console.log(collision);
+			material = new THREE.MeshPhongMaterial( { color: 0xFF0000});
+			wall = new THREE.Mesh( geometry, material );
+			wall.position.set(0,-5,0);
+		
+			scene.add(MovingCube);
+			scene.add(wall);
+
+			var col = Math.abs(collision.y);
+			var compteur = (cptRes*0.1).toFixed(1);
+			res = compteur - col;
+			return res;
+}
+
+function unCollisionColor()
+{
+
+			scene.remove(MovingCube);
+			scene.remove(wall);
+			wireMaterial = new THREE.MeshPhongMaterial( { color: 0xE3DAC9});
+			wireMaterial.needsUpdate = true;
+			MovingCube =new THREE.Mesh( cubeGeometry, wireMaterial );
+			var collision = MovingCube.position.add(NewPoint); //variable qui enregistre le déplacement de l'objet en mouvement.
+
+			material = new THREE.MeshPhongMaterial( { color: 0xE3DAC9});
+			wall = new THREE.Mesh( geometry, material );
+			wall.position.set(0,-5,0);
+			 
+			scene.add(MovingCube);
+			scene.add(wall);
+}
+
+function update()
+{
+	var delta = clock.getDelta(); 
+	var moveDistance = 0.1;
+	var rotateAngle = Math.PI / 2 * delta; 
+	var originPoint;
+/*	if ( keyboard.pressed("A") )
+	{
+		MovingCube.rotation.y += rotateAngle;
+	}
+		
+	if ( keyboard.pressed("D") )
+	{
+		MovingCube.rotation.y -= rotateAngle;
+	}
+		
+			
+	if ( keyboard.pressed("left") )
+	{
+		MovingCube.position.x -= moveDistance;
+	}
+	if ( keyboard.pressed("right") )
+	{
+		MovingCube.position.x += moveDistance;
+	}
+		
+	if ( keyboard.pressed("H") )
+	{
+		MovingCube.position.z += moveDistance;
+	}
+		
+	if ( keyboard.pressed("L") )
+	{
+		MovingCube.position.z -= moveDistance;
+	}*/
+		
+	if ( keyboard.pressed("up") )
+	{
+		MovingCube.position.y += moveDistance;
+		cptUp = cptUp - 1;
+		cptAffichage = cptDown + cptUp;
+		cptRes = cptUp;
+
+	}
+	
+	
+	if ( keyboard.pressed("down") )
+	{
+		MovingCube.position.y -= moveDistance;
+		cptDown = cptDown + 1;
+		cptAffichage = cptDown +cptUp;
+		cptRes = cptDown;
+
+	}
+	
+	if ( keyboard.pressed("R") )
+	{
+		location.reload(); // recharge la page
+	}
+	
+			
+
+	setTimeout(function(){ NewPoint = MovingCube.position.clone(); 
+	
+
+	detectionText("");
+	clearText();
+	
+	for (var vertexIndex = 0; vertexIndex < cubeGeometry.vertices.length; vertexIndex++)
+	{		
+		appendText( (cptAffichage * 0.1).toFixed(1) +" mm");
+
+		var localVertex = cubeGeometry.vertices[vertexIndex].clone();
+		var globalVertex = localVertex.applyMatrix4( MovingCube.matrix );
+		var directionVector = globalVertex.sub( MovingCube.position );
+		
+		var ray = new THREE.Raycaster( NewPoint, directionVector.clone().normalize() );
+		var collisionResults = ray.intersectObjects( collidableMeshList );
+
+		if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+		{
+
+			detectionText(" Collision Detected " );
+			res = collisionColor();	
+			/*else
+			{
+				res = collisionColor();
+			}*/
+			if (res !=0 )
+			{
+				unCollisionColor();
+			}	
+		}	
+
+			
+			
+			
+	}	}, 100);// attend 100ms avant de lancer la fonction
+
+}
+
+function render() 
+{
+	renderer.render( scene, camera );
+	controls.update();
+}
+
+</script>
+
+</body>
+</html>
