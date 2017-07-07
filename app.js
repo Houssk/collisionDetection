@@ -118,44 +118,19 @@ function detectionText(txt)
 
 function collisionColor()
 {
-/*    scene.remove(MovingCube);
- scene.remove(wall);
- wireMaterial = new THREE.MeshPhongMaterial( { color: 0xFF0000});
- wireMaterial.needsUpdate = true;
- MovingCube =new THREE.Mesh( cubeGeometry, wireMaterial );
- var collision = MovingCube.position.add(NewPoint); //variable qui enregistre le déplacement de l'objet en mouvement.
- material = new THREE.MeshPhongMaterial( { color: 0xFF0000});
- wall = new THREE.Mesh( geometry, material );
- wall.position.set(0,-5,0);
- scene.add(MovingCube);
- scene.add(wall);*/
-    console.log(NewPoint);
 
     MovingCube.position.x= NewPoint.x;
     MovingCube.position.y= NewPoint.y;
     MovingCube.position.z =NewPoint.z ;
-
     MovingCube.material.color.setHex(0xFF0000);
     wall.material.color.setHex(0xFF0000);
     var col = Math.abs(MovingCube.position.y);
     var compteur = (cptRes*0.1).toFixed(1);
     res = compteur - col;
-    return res;
 }
 
 function unCollisionColor()
 {
-/*    scene.remove(MovingCube);
-    scene.remove(wall);
-    wireMaterial = new THREE.MeshPhongMaterial( { color: 0xE3DAC9});
-    wireMaterial.needsUpdate = true;
-    MovingCube =new THREE.Mesh( cubeGeometry, wireMaterial );
-    var collision = MovingCube.position.add(NewPoint); //variable qui enregistre le déplacement de l'objet en mouvement.
-    material = new THREE.MeshPhongMaterial( { color: 0xE3DAC9});
-    wall = new THREE.Mesh( geometry, material );
-    wall.position.set(0,-5,0);
-    scene.add(MovingCube);
-    scene.add(wall);*/
   MovingCube.material.color.setHex(0xE3DAC9);
   wall.material.color.setHex(0xE3DAC9);
 }
@@ -169,20 +144,30 @@ function update()
 
     if ( keyboard.pressed("up") )
     {
+
+        console.log(MovingCube.material.color);
+        MovingCube.material.color.setHex(0xE3DAC9);
+        wall.material.color.setHex(0xE3DAC9);
         MovingCube.position.y += moveDistance;
         cptUp = cptUp - 1;
         cptAffichage = cptDown + cptUp;
         cptRes = cptUp;
-
+        computeCollision();
+        console.log(MovingCube.material.color);
     }
 
 
     if ( keyboard.pressed("down") )
     {
+        console.log(MovingCube.material.color);
+        MovingCube.material.color.setHex(0xE3DAC9);
+        wall.material.color.setHex(0xE3DAC9);
         MovingCube.position.y -= moveDistance;
         cptDown = cptDown + 1;
         cptAffichage = cptDown +cptUp;
         cptRes = cptDown;
+        computeCollision();
+        console.log(MovingCube.material.color);
 
     }
 
@@ -190,39 +175,25 @@ function update()
     {
         location.reload(); // recharge la page
     }
-
-       if(MovingCube == undefined) {
-           console.log("testUndefined");
-       }
-       else {
-
-           NewPoint = MovingCube.position.clone();
-           detectionText("");
-           clearText();
-
-           for (var vertexIndex = 0; vertexIndex < cubeGeometry.vertices.length; vertexIndex++) {
-               appendText((cptAffichage * 0.1).toFixed(1) + " mm");
-               var localVertex = cubeGeometry.vertices[vertexIndex].clone();
-               var globalVertex = localVertex.applyMatrix4(MovingCube.matrix);
-               var directionVector = globalVertex.sub(MovingCube.position);
-
-               var ray = new THREE.Raycaster(NewPoint, directionVector.clone().normalize());
-               var collisionResults = ray.intersectObjects(collidableMeshList);
-               if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                   detectionText(" Collision Detected ");
-                   res = collisionColor();
-                   /*else
-                    {
-                    res = collisionColor();
-                    }*/
-                   if (res != 0) {
-                       unCollisionColor();
-                   }
-               }
-           }
-       }
 }
-
+function computeCollision() {
+    NewPoint = MovingCube.position.clone();
+    detectionText("");
+    clearText();
+    for (var vertexIndex = 0; vertexIndex < cubeGeometry.vertices.length; vertexIndex++) {
+        appendText((cptAffichage * 0.1).toFixed(1) + " mm");
+        var localVertex = cubeGeometry.vertices[vertexIndex].clone();
+        var globalVertex = localVertex.applyMatrix4(MovingCube.matrix);
+        var directionVector = globalVertex.sub(MovingCube.position);
+        var ray = new THREE.Raycaster(NewPoint, directionVector.clone().normalize());
+        var collisionResults = ray.intersectObjects(collidableMeshList);
+        if (collisionResults.length >  0 && collisionResults[0].distance < directionVector.length()) {
+            detectionText(" Collision Detected ");
+            MovingCube.material.color.setHex(0xFF0000);
+            wall.material.color.setHex(0x00FF00);
+        }
+    }
+}
 function render()
 {   // NewPoint = MovingCube.position.clone();
     requestAnimationFrame( render );
@@ -230,12 +201,3 @@ function render()
     controls.update();
     update();
 }
-
-
-/*
-function animate()
-{
-
-    render();
-    update();
-}*/

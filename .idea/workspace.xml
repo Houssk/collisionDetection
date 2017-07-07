@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="385d7c48-0033-416b-8b05-7a013a118971" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
     </list>
     <ignored path="testCollisionCube.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,8 +38,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="206" column="75" selection-start-line="206" selection-start-column="75" selection-end-line="206" selection-end-column="75" />
+            <state relative-caret-position="572">
+              <caret line="189" column="74" selection-start-line="189" selection-start-column="74" selection-end-line="189" selection-end-column="74" />
               <folding>
                 <element signature="e#0#48#0" expanded="false" />
               </folding>
@@ -189,15 +187,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1499417088195</updated>
-      <workItem from="1499417089555" duration="2297000" />
+      <workItem from="1499417089555" duration="4745000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2297000" />
+    <option name="totallyTimeSpent" value="4745000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2217484" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -249,8 +247,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="206" column="75" selection-start-line="206" selection-start-column="75" selection-end-line="206" selection-end-column="75" />
+        <state relative-caret-position="572">
+          <caret line="189" column="74" selection-start-line="189" selection-start-column="74" selection-end-line="189" selection-end-column="74" />
           <folding>
             <element signature="e#0#48#0" expanded="false" />
           </folding>
