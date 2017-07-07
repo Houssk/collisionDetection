@@ -1,0 +1,6 @@
+[0707/103237.023:ERROR:crash_report_database_win.cc(563)] CreateDirectory C:\Program Files (x86)\Jarhair\Reports\Dump: Le chemin d’accès spécifié est introuvable. (0x3)
+[0707/103237.033:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Le canal de communication a été fermé. (0x6D)
+[0707/103237.035:ERROR:crash_report_database_win.cc(563)] CreateDirectory C:\Program Files (x86)\Jarhair\Reports\Dump: Le chemin d’accès spécifié est introuvable. (0x3)
+[0707/103505.541:ERROR:crash_report_database_win.cc(563)] CreateDirectory C:\Program Files (x86)\Jarhair\Reports\Dump: Le chemin d’accès spécifié est introuvable. (0x3)
+[0707/103505.546:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Le canal de communication a été fermé. (0x6D)
+[0707/103505.548:ERROR:crash_report_database_win.cc(563)] CreateDirectory C:\Program Files (x86)\Jarhair\Reports\Dump: Le chemin d’accès spécifié est introuvable. (0x3)
