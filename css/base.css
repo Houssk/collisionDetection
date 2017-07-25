@@ -2,7 +2,163 @@ body
 {
 	font-family: Monospace;
 	font-weight: bold;
-	background-color: #ccccff;
+	background-color: #FF3E00;
 	margin: 0px;
 	overflow: hidden;
 }
+
+    #kbdFrame {
+      float: left;
+    }
+    ul li {
+      white-space: nowrap;
+      overflow: hidden;
+      list-style-type: none;
+      display: inline-block;
+      border: 2px solid #FF3E00;
+      margin: 2px;
+      color: #000;
+      border-radius: 5px;
+      box-sizing: border-box;
+      text-align: center;
+      overflow: hidden;
+      cursor: pointer;
+      font-family: arial, sans-serif;
+      font-size: 15px;
+      width: 65px;
+      height: 65px;
+      line-height: 65px;
+
+     /* width: 100px;
+      height: 91px;
+      line-height: 100px;*/
+    }
+   
+  #down {
+    color:#FF8C49;
+	  font-size: 30px;
+	  text-align: center;
+
+    /*background-image: url("../images/logoGD.jpg");*/
+
+    position: absolute;
+    top: 400px;
+    left: 200px;
+    }
+
+	#left{
+	  color:#FF8C49;
+	  font-size: 30px;
+	  text-align: center;
+
+    /*background-image: url("../images/logoGD.jpg");*/
+
+    position: absolute;
+    top: 300px;
+    left: 100px;
+	 }
+
+  #up {
+	  color:#FF8C49;
+	  font-size: 30px;
+	  text-align: center;
+
+    /*background-image: url("../images/logoGD.jpg");*/
+
+    position: absolute;
+    top: 200px;
+    left: 200px;
+	}
+
+  #right{
+	  color:#FF8C49;
+	  font-size: 30px;
+	  text-align: center;
+
+    /*background-image: url("../images/logoGD.jpg");*/
+
+    position: absolute;
+    top: 300px;
+    left: 300px;
+  }
+
+  #button3D{
+    position: absolute;
+    top: 350px;
+    right:200px;
+  }
+
+    #button2DMan{
+    position: absolute;
+    top: 300px;
+    right:220px;
+  }
+
+    #button2DMax{
+    position: absolute;
+    top: 250px;
+    right:220px;
+  }
+
+  #buttonMandibule{
+    position: absolute;
+    top: 550px;
+    left:70px;
+  }
+
+  #buttonMaxillaire{
+    position: absolute;
+    top: 550px;
+    left:250px;
+  }
+
+  #buttonMandibuleA{
+    position: absolute;
+    top: 500px;
+    left:80px;
+  }
+
+  #buttonMaxillaireA{
+    position: absolute;
+    top: 500px;
+    left:260px;
+  }
+
+  #planeUpMan{
+    position: absolute;
+    top: 400px;
+    right: 250px;
+  }
+
+  #planeDownMan{
+    position: absolute;
+    top: 450px;
+    right: 250px;
+  }
+
+  #planeUpMax{
+    position: absolute;
+    top: 50px;
+    right: 250px;
+  }
+
+  #planeDownMax{
+    position: absolute;
+    top: 100px;
+    right: 250px;
+  }
+
+  #ValiderPlanMan{
+    position: absolute;
+    top: 500px;
+    right: 240px;
+  }
+
+   #ValiderPlanMax{
+    position: absolute;
+    top: 150px;
+    right: 240px;
+  }
+   
+
+	
