@@ -107,7 +107,7 @@ function init()
     var cheminMaxillaire="maxillaire3.obj";
     var loader = new THREE.OBJLoader();
     var cheminMand= "mandibule3.obj";
-    
+
 
     loader2.load(cheminMaxillaire,function(object){
         object.traverse(function(child){
@@ -264,24 +264,13 @@ function intersectionPlanMan()
         if (pointOfIntersection) {
             pointsOfIntersection.vertices.push(pointOfIntersection.clone());
         };
-
-    var pointsMaterial = new THREE.PointsMaterial({
-        size: .5,
-        color: "blue"
-    });
-    var points = new THREE.Points(pointsOfIntersection, pointsMaterial);
-    scene.add(points);
-
-     var lines = new THREE.LineSegments(pointsOfIntersection, new THREE.LineBasicMaterial({
-    color: 0xff0000
-  }));
-  scene.add(lines);
+            var pointsMaterial = new THREE.PointsMaterial({size: .5, color: "blue"});
+            var points = new THREE.Points(pointsOfIntersection, pointsMaterial);
+            scene.add(points);
+             var lines = new THREE.LineSegments(pointsOfIntersection, new THREE.LineBasicMaterial({color: 0xff0000}));
+            scene.add(lines);
         }
-
-
-
   });
-
 }
 
 function intersectionPlanMax()
@@ -455,101 +444,28 @@ function computeCollision(NewPoint) {
                 firstColy = MovingCube.position.y;
                 firstRotz = MovingCube.rotation.z; // forcément = 0 puisque la rotation est nulle
            }
+        }
+        else{
+               if(        ((MovingCube.position.y >  firstColy ) &&  (MovingCube.rotation.z >  firstRotzN )) //    si nvellePosY > colPosY et nvelleRotZ > colRotZN : si on bouge en y et en rotation neg
+                       || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z <  firstRotzP )) // ou si nvellePosY > colPosY et nvelleRotZ < colRotZP :si on bouge en y et en rotation pos
+                       || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z == firstRotzN )) // ou si nvellePosY > colPosY et nvelleRotZ = colRotZ : si on bouge en y mais pas en rotation neg
+                       || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z >  firstRotzN )) // ou si nvellePosY = colPosY et nvelleRotZ > colRotZN: si on bouge pas en y mais en rotation neg
+                       || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z == firstRotzP)) // ou si nvellePosY > colPosY et nvelleRotZ = colRotZP: si on bouge en y mais pas en rotation pos
+                       || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z <  firstRotzP)) // ou si nvellePosY = colPosY et nvelleRotZ < colRotZP: si on bouge pas en y mais en rotation pos
+                       || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z <  firstRotz )) // ou si nvellePosY > colPosY et nouvelle rotation neg : Si on bouge en y et si on crée une rot neg
+                       || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z >  firstRotz )) // ou si nvellePosY > colPosY et nouvelle rotation pos : Si on bouge en y et si on crée une rot pos
+                       || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z <  firstRotz )) // ou si nvellePosY = colPosY et nouvelle rotation neg: si on bouge pas en y mais en rotation nèg
+                       || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z >  firstRotz )) // ou si nvellePosY = colPosY et nouvelle rotation pos: si on bouge pas en y mais en rotation pos
+                       || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z == firstRotz )) // ou si nvellePosY > colPosY et pas de rotation : Si on bouge en y et on a une rotation nulle
+                   )
 
-         /*   for(var i= 0; i< nbCollision; i++)
-            {
-                col0[i] = firstColy;
-                col1[i] = firstRotz;
-            }
-            collisionTab[0] = col0;
-            collisionTab[1] = col1;*/
-
-          /*  nbCollision = nbCollision +1;   // équivalent à nbCollision = nbCollision +1;
-            console.log(nbCollision);
-            if(nbCollision == 1 && signe == 0) // cas sans rotation
-             {
-                firstColy = MovingCube.position.y;
-                firstRotz = MovingCube.rotation.z;
-                console.log("Pas de rotation");
-                console.log(firstColy);
-                console.log(firstRotz);
-             }
-
-            if(nbCollision == 1  && signe == -1) // cas avec une rotation negative en z
-            {
-                firstColy = MovingCube.position.y;
-                firstRotzN = MovingCube.rotation.z;
-                console.log(firstColy);
-                console.log(firstRotzN);
-                console.log("Rotation négative");
-            }
-
-            if(nbCollision == 1 && signe == 1) // cas avec une rotation positive en z
-            {
-                firstColy = MovingCube.position.y;
-                firstRotzP = MovingCube.rotation.z;
-                console.log(firstColy);
-                console.log(firstRotzP);
-                console.log("Rotation positive");
-            }*/
-
-            /*console.log("collisionTabPosy[n] = " + collisionTabPosy[n]);
-              console.log("collisionTabRotzN[n] = " + collisionTabRotzN[n]);
-              console.log("collisionTabRotzP[n] = " + collisionTabRotzP[n]);
-              console.log("collisionTabRotz[n] = " + collisionTabRotz[n]);*/
-        /*  for (var nb = 0; nb <= collisionTab.length; nb++)
-          {
-              console.log(collisionTab[0][nb]);
-              console.log(collisionTab[1][nb]);
-              if(    ( MovingCube.position.y >  collisionTab[0][nb]  &&  MovingCube.rotation.z ==  collisionTab[1][nb] ) //    si nvellePosY > colPosY et nvelleRotZ > colRotZN : si on bouge en y et en rotation neg
-               /*     || ( MovingCube.position.y >  collisionTabPosy[n]  &&  MovingCube.rotation.z <  collisionTabRotzP[n] ) // ou si nvellePosY > colPosY et nvelleRotZ < colRotZP :si on bouge en y et en rotation pos 
-                    || ( MovingCube.position.y >  collisionTabPosy[n]  &&  MovingCube.rotation.z == collisionTabRotzN[n] ) // ou si nvellePosY > colPosY et nvelleRotZ = colRotZ : si on bouge en y mais pas en rotation neg
-                    || ( MovingCube.position.y == collisionTabPosy[n]  &&  MovingCube.rotation.z >  collisionTabRotzN[n] ) // ou si nvellePosY = colPosY et nvelleRotZ > colRotZN: si on bouge pas en y mais en rotation neg
-                    || ( MovingCube.position.y >  collisionTabPosy[n]  &&  MovingCube.rotation.z == collisionTabRotzP[n] ) // ou si nvellePosY > colPosY et nvelleRotZ = colRotZP: si on bouge en y mais pas en rotation pos
-                    || ( MovingCube.position.y == collisionTabPosy[n]  &&  MovingCube.rotation.z <  collisionTabRotzP[n] ) // ou si nvellePosY = colPosY et nvelleRotZ < colRotZP: si on bouge pas en y mais en rotation pos
-                    || ( MovingCube.position.y >  collisionTabPosy[n]  &&  MovingCube.rotation.z <  collisionTabRotz[n]  ) // ou si nvellePosY > colPosY et nouvelle rotation neg : Si on bouge en y et si on crée une rot neg
-                    || ( MovingCube.position.y >  collisionTabPosy[n]  &&  MovingCube.rotation.z >  collisionTabRotz[n]  ) // ou si nvellePosY > colPosY et nouvelle rotation pos : Si on bouge en y et si on crée une rot pos
-                    || ( MovingCube.position.y == collisionTabPosy[n]  &&  MovingCube.rotation.z <  collisionTabRotz[n]  ) // ou si nvellePosY = colPosY et nouvelle rotation neg: si on bouge pas en y mais en rotation nèg
-                    || ( MovingCube.position.y == collisionTabPosy[n]  &&  MovingCube.rotation.z >  collisionTabRotz[n]  ) // ou si nvellePosY = colPosY et nouvelle rotation pos: si on bouge pas en y mais en rotation pos
-                    || ( MovingCube.position.y >  collisionTabPosy[n]  &&  MovingCube.rotation.z == collisionTabRotz[n]  ) // ou si nvellePosY > colPosY et pas de rotation : Si on bouge en y et on a une rotation nulle
-                ) 
-                {
-                    MovingCube.material.color.setHex(0xE3DAC9);
-                    wall.material.color.setHex(0xE3DAC9);
-                    detectionText("");
-                    // appendText((cptAffichage * 0.1).toFixed(1) + " mm");
-                    // appendText("x = " + MovingCube.position.x + " y = " + MovingCube.position.y + " z = " +  MovingCube.position.z + " Rotation = " +  Rotation);
-                    appendText("x = " + (MovingCube.position.x).toFixed(1) + " y = " + (MovingCube.position.y).toFixed(1) + " z = " +  (MovingCube.position.z).toFixed(1) + " Rotation = " +  (MovingCube.rotation.z).toFixed(2));
-                    // nbCollision = 0;
-                    console.log("ok");
-                }
-        }*/   
-                }
-                else{
-                        if(        ((MovingCube.position.y >  firstColy ) &&  (MovingCube.rotation.z >  firstRotzN )) //    si nvellePosY > colPosY et nvelleRotZ > colRotZN : si on bouge en y et en rotation neg
-                                || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z <  firstRotzP )) // ou si nvellePosY > colPosY et nvelleRotZ < colRotZP :si on bouge en y et en rotation pos 
-                                || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z == firstRotzN )) // ou si nvellePosY > colPosY et nvelleRotZ = colRotZ : si on bouge en y mais pas en rotation neg
-                                || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z >  firstRotzN )) // ou si nvellePosY = colPosY et nvelleRotZ > colRotZN: si on bouge pas en y mais en rotation neg
-                                || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z == firstRotzP)) // ou si nvellePosY > colPosY et nvelleRotZ = colRotZP: si on bouge en y mais pas en rotation pos
-                                || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z <  firstRotzP)) // ou si nvellePosY = colPosY et nvelleRotZ < colRotZP: si on bouge pas en y mais en rotation pos
-                                || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z <  firstRotz )) // ou si nvellePosY > colPosY et nouvelle rotation neg : Si on bouge en y et si on crée une rot neg
-                                || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z >  firstRotz )) // ou si nvellePosY > colPosY et nouvelle rotation pos : Si on bouge en y et si on crée une rot pos
-                                || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z <  firstRotz )) // ou si nvellePosY = colPosY et nouvelle rotation neg: si on bouge pas en y mais en rotation nèg
-                                || (( MovingCube.position.y == firstColy)  &&  (MovingCube.rotation.z >  firstRotz )) // ou si nvellePosY = colPosY et nouvelle rotation pos: si on bouge pas en y mais en rotation pos
-                                || (( MovingCube.position.y >  firstColy)  &&  (MovingCube.rotation.z == firstRotz )) // ou si nvellePosY > colPosY et pas de rotation : Si on bouge en y et on a une rotation nulle
-                            ) 
-
-                            {
-                                MovingCube.material.color.setHex(0xE3DAC9);
-                                wall.material.color.setHex(0xE3DAC9);
-                                detectionText("");
-                            // appendText((cptAffichage * 0.1).toFixed(1) + " mm");
-                            // appendText("x = " + MovingCube.position.x + " y = " + MovingCube.position.y + " z = " +  MovingCube.position.z + " Rotation = " +  Rotation);
-                                appendText("x = " + (MovingCube.position.x).toFixed(1) + " y = " + (MovingCube.position.y).toFixed(1) + " z = " +  (MovingCube.position.z).toFixed(1) + " Rotation = " +  (MovingCube.rotation.z).toFixed(2));
-                                //nbCollision = false;
-                        
-                            }  
-                    }
+                   {
+                       MovingCube.material.color.setHex(0xE3DAC9);
+                       wall.material.color.setHex(0xE3DAC9);
+                       detectionText("");
+                       appendText("x = " + (MovingCube.position.x).toFixed(1) + " y = " + (MovingCube.position.y).toFixed(1) + " z = " +  (MovingCube.position.z).toFixed(1) + " Rotation = " +  (MovingCube.rotation.z).toFixed(2));
+                   }
+           }
     }
 
 }
