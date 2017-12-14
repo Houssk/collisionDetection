@@ -124,6 +124,18 @@ body
     left:260px;
   }
 
+  #buttonGouttiere{
+    position:absolute;
+    top: 100px;
+    left: 100px;
+  }
+
+  #buttonEmpreinte{
+    position:absolute;
+    top: 150px;
+    left: 100px;
+  }
+
   #planeUpMan{
     position: absolute;
     top: 400px;
@@ -136,6 +148,18 @@ body
     right: 250px;
   }
 
+    #planeLeftMan{
+    position: absolute;
+    top: 425px;
+    right: 400px;
+  }
+
+  #planeRightMan{
+    position: absolute;
+    top: 425px;
+    right: 100px;
+  }
+
   #planeUpMax{
     position: absolute;
     top: 50px;
@@ -146,6 +170,18 @@ body
     position: absolute;
     top: 100px;
     right: 250px;
+  }
+
+     #planeLeftMax{
+    position: absolute;
+    top: 75px;
+    right: 400px;
+  }
+
+  #planeRightMax{
+    position: absolute;
+    top: 75px;
+    right: 100px;
   }
 
   #ValiderPlanMan{
