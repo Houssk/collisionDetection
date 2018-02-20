@@ -64,6 +64,8 @@ var raycaster;
 var mouse;
 var particle3D = [];
 
+var parent = new THREE.Object3D();
+
 init();
 render();
 
@@ -77,7 +79,7 @@ function init()
     group = new THREE.Group();
 	
 	scene.add( group );
-
+    scene.add(parent);
     // CAMERA
     var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 1, FAR = 1000;
@@ -117,11 +119,11 @@ function init()
     scene.add(axis);
   
     var loader2 = new THREE.OBJLoader();
-    var cheminMaxillaire="bohn_Maxillaire3000.obj";
-    //var cheminMaxillaire="maxillaire3000.obj";
+    //var cheminMaxillaire="maxillaireInitial_Bohn_2000.obj";
+    var cheminMaxillaire="maxillaire1000.obj";
     var loader = new THREE.OBJLoader();
-    var cheminMand= "bohn_Mandibule3000.obj";
-    //var cheminMand= "mandibule3000.obj";
+   // var cheminMand= "burdin_ruffio.obj";
+    var cheminMand= "mandibule1000.obj";
 
     loader2.load(cheminMaxillaire,function(object){
         object.traverse(function(child){
@@ -130,7 +132,7 @@ function init()
                 wireMaterial = new THREE.MeshPhongMaterial( { color: 0xE3DAC9});
                 MovingCube = new THREE.Mesh( cubeGeometry, wireMaterial );
                 MovingCube.name = 'maxillaire';
-                scene.add( MovingCube );
+                parent.add( MovingCube );
             }
         })
     });
@@ -142,8 +144,8 @@ function init()
                 material = new THREE.MeshPhongMaterial({ color: 0xE3DAC9});//, wireframe:true});
                 wall = new THREE.Mesh(geometry,material);
                 wall.name = 'mandibule';
-                wall.position.set(0, -5, 0);
-                scene.add(wall);
+               // wall.position.set(0, -5, 0);
+                parent.add(wall);
                 collidableMeshList.push(wall); // permet de garder en mémoire l'objet qui ne doit pas rentrer en collision avec l'objet en mouvement.
 
         }})
@@ -162,15 +164,16 @@ function init()
         mouse.x = ( (event.clientX  ) /  window.innerWidth ) * 2 - 1;
         mouse.y = -( (event.clientY ) /  window.innerHeight ) * 2 + 1;
        
-        //console.log("mouse", mouse.x, mouse.y);
+       // console.log("mouse", mouse.x, mouse.y);
         raycaster.setFromCamera(mouse, camera);
         var intersects = raycaster.intersectObject(wall);
         if (intersects.length > 0) {
             var pointSphere = new THREE.SphereGeometry(1, 15, 15);
             particle = new THREE.Mesh(pointSphere, particleMaterial);
             particle.position.copy(intersects[0].point);
+             console.log("point",particle.position);
             particle3D.push(particle);
-            scene.add(particle);
+            wall.add(particle);
         }
     }
 }
@@ -180,16 +183,7 @@ function init()
     up = document.getElementById('up');
     down = document.getElementById('down');
 
-function addGeometry( geometry, color, x, y, z, rx, ry, rz, s ) {
 
-					var mesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [new THREE.MeshLambertMaterial( { color: 0x00ff11} ) , new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: false,  opacity: 0.3 } ) ] );
-
-					mesh.position.set( x, y , z  );
-					mesh.scale.set( 1, 1, 1 );
-					if ( geometry.debug ) mesh.add( geometry.debug );
-					scene.add( mesh );
-                    return mesh;
-				}
 function sqr(a) {
     return a*a;
 }
@@ -201,43 +195,64 @@ function Distance(x1, y1, x2, y2) {
     function addGouttiere(){
         var extrudeSettings = { amount: 100,  bevelEnabled: true, bevelSegments: 2, steps: 150 	};
 		 var distanceZ = Distance(particle3D[1].position.z,particle3D[1].position.y,particle3D[2].position.z,particle3D[2].position.y);
-        spline = new THREE.QuadraticBezierCurve3(
+          var sphereGeo = new THREE.SphereGeometry(1,32,32);
+          var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+          var sphere = new THREE.Mesh( sphereGeo, material );
+           sphere.position.set(((particle3D[2].position.x + particle3D[0].position.x)/2),particle3D[2].position.y -3 ,((particle3D[1].position.z + particle3D[0].position.z))/2);
+        var B = Distance(particle3D[1].position.z,particle3D[1].position.y,sphere.position.z,sphere.position.y);
+        var A = Distance(particle3D[1].position.z,sphere.position.y,sphere.position.z,sphere.position.y);
+        inclinaison = Math.acos(A/B);
+        var distanceX = Distance(particle3D[2].position.x ,particle3D[2].position.y , particle3D[0].position.x, particle3D[0].position.y);
+       
+          
+          parent.add(sphere);
+          spline = new THREE.QuadraticBezierCurve3(
             new THREE.Vector3(particle3D[0].position.x ,particle3D[0].position.y,particle3D[0].position.z),
-            new THREE.Vector3( particle3D[1].position.x ,particle3D[1].position.y,particle3D[1].position.z + distanceZ),
+            new THREE.Vector3( particle3D[1].position.x ,particle3D[1].position.y,particle3D[1].position.z +40),
             new THREE.Vector3(particle3D[2].position.x ,particle3D[2].position.y,particle3D[2].position.z  )    
             );
 
-
         var geometry = new THREE.Geometry();
-        geometry.vertices = spline.getPoints( 50 );
+        geometry.vertices = spline.getPoints( 20 );
         var materialCurve =new THREE.LineBasicMaterial( { color : 0x0000ff } );
         var curveObject = new THREE.Line( geometry, materialCurve );
-        scene.add(curveObject);
+        wall.add(curveObject);
        
         extrudeSettings.extrudePath = spline;
-			var tube = new THREE.TubeGeometry(extrudeSettings.extrudePath, 5, 8, 8, false);
+			var tube = new THREE.TubeGeometry(extrudeSettings.extrudePath, 15, 5, 15, false);
             gout = new THREE.Mesh(tube, new THREE.MeshLambertMaterial( { color: 0x00ff11} ));
-            var boxgeo = new THREE.BoxGeometry(80, 4, distanceZ+10);
+            var boxgeo = new THREE.BoxGeometry(distanceX +5, 2, distanceZ +15);
             var box = new THREE.Mesh(boxgeo,new THREE.MeshLambertMaterial( { color: 0x00ff11} ));
-            box.position.y= wall.position.y;
-            box.position.z = wall.position.z + 20;
-            scene.add(box);
+          //  box.position.copy(sphere.position);
+            //box.rotation.x = inclinaison;
+            console.log(box.position);
+            console.log(gout.position);
+            box.rotation.x = inclinaison;
+            box.position.copy(sphere.position);
+        
+            gout.add(box); 
            
-           
+           wall.add(gout);
+           //gout.add(box);
            gouttiere = intersection(box,gout);
-           scene.remove(box);
+           gouttiere.name == 'gouttiere';
+           parent.add(gouttiere);
+          gout.remove(box);
             resultUnion = union(MovingCube,wall);
             subtract(gouttiere,resultUnion);
-            scene.remove(MovingCube);
-            scene.remove(wall);
-            scene.remove(resultUnion);
-            scene.remove(gouttiere);
-            scene.remove(curveObject);
-            scene.remove(particle3D[0]);
-            scene.remove(particle3D[1]);
-            scene.remove(particle3D[2]);
-           // scene.remove(particle3D[3]);
-            saveContourSTL( scene, "gouttiere bohn 1000" );
+           //subtract(gouttiere,wall);
+            parent.remove(MovingCube);
+            parent.remove(wall);
+            parent.remove(resultUnion);
+            parent.remove(sphere);
+            wall.remove(gout);
+            parent.remove(gouttiere);
+            wall.remove(curveObject);
+            wall.remove(particle3D[0]);
+            wall.remove(particle3D[1]);
+            wall.remove(particle3D[2]);
+           // parent.remove(particle3D[3]);
+            saveContourSTL( scene, "gouttiere realini" );
     }
 
 
@@ -483,7 +498,7 @@ function intersection(mesh,mesh2) {
 		var object2  = new ThreeBSP(geo2);
 		var intersect_bsp = object1.intersect( object2 );
 		var result = intersect_bsp.toMesh(new THREE.MeshLambertMaterial( {color:0x0000FF})); 
-		scene.add( result );
+		wall.add( result );
         return result;
 }//
 
@@ -496,9 +511,10 @@ function subtract(mesh,mesh2) {
 		var object2  = new ThreeBSP(geo2);
 		var subtract_bsp = object1.subtract( object2 );
 		resultSubtract = subtract_bsp.toMesh(new THREE.MeshLambertMaterial( {color:0xE3DAC9 , emissive:0xE3DAC9})); 
-		scene.add( resultSubtract );
+		parent.add( resultSubtract );
         resultSubtract.name="empreinte";
     }//
+
 var resultSubtract;
 var resultUnion;
 function union(mesh,mesh2) {
@@ -509,7 +525,7 @@ function union(mesh,mesh2) {
 		var object2  = new ThreeBSP(geo2);
 		var subtract_bsp = object1.union( object2 );
 		resultUnion = subtract_bsp.toMesh(new THREE.MeshLambertMaterial( { color:0x0000FF})); 
-		scene.add( resultUnion );
+		parent.add( resultUnion );
         resultUnion.name = "Max + Man";
         return resultUnion;
 }//
@@ -671,25 +687,25 @@ function render()
 
 function RemoveMandibule() 
 {
-    scene.remove( wall );
+    parent.remove( wall );
      wall.name = '';
 }
 
 function RemoveMaxillaire() 
 {
-    scene.remove( MovingCube );
+    parent.remove( MovingCube );
      MovingCube.name = '';
 }
 
 function AddMandibule() 
 {
-    scene.add( wall );
+    parent.add( wall );
      wall.name = 'mandibule';
 }
 
 function AddMaxillaire() 
 {
-    scene.add( MovingCube );
+    parent.add( MovingCube );
      MovingCube.name = 'maxillaire';
 }
 

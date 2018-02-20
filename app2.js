@@ -32,6 +32,8 @@ var shape;
 var raycaster;
 var mouse;
 var particle3D = [];
+
+var etatcol = Boolean(false);
 /**
  * Get Document for view
  */
@@ -84,9 +86,9 @@ function init() {
     controls = new THREE.OrbitControls(camera3D, renderer3D.domElement);
 
     var loader2 = new THREE.OBJLoader();
-    var cheminMaxillaire="bohn_Mandibule1000.obj";
+    var cheminMaxillaire="affholder_Maxillaire1000.obj";
     var loader = new THREE.OBJLoader();
-    var cheminMand= "bohn_Maxillaire1000.obj";
+    var cheminMand= "affholder_Maxillaire1000.obj";
 
     loader2.load(cheminMaxillaire,function(object){
         object.traverse(function(child){
@@ -136,6 +138,7 @@ function init() {
         ry: 0.0001, // numeric slider
         rz: 0.0001, // numeric slider
         tp:0,
+        interference : false,
         gout : false ,
         display : false,
         empreinte: false,
@@ -161,6 +164,7 @@ function init() {
     var rotationZ    = folderMandibule.add( parameters, 'rz' ).min(-1).max(1).step(0.001).name('Rotation Z');//.listen();
     //var translationplane = folderMandibule.add( parameters, 'tp' ).min(-10).max(10).step(0.01).name('translation plan');
     var display = folderMandibule.add(parameters,'display');
+    var interference = folderMandibule.add(parameters,'interference');
     folderMandibule.open();
 
     var folderGouttiere = gui.addFolder('Gouttière');
@@ -192,7 +196,8 @@ function init() {
         objectMandibule.children[0].position.y = value;
         //box2.position.y = value;
         // collision(objectMandibule,objectMaxillaire);
-        computeCollision(objectMandibule,objectMaxillaireSimplified);  
+        etatcol = computeCollision(objectMandibule,objectMaxillaireSimplified);  
+
 
     });
 
@@ -242,6 +247,27 @@ function init() {
         objectMaxillaire.visible = true;
     });
 
+    interference.onChange(function(){
+        var cptInter = 0; 
+    etatcol = computeCollision(objectMandibule,objectMaxillaireSimplified);
+    do 
+        {
+            cptInter +=1;  
+            objectMandibule.position.y = objectMandibule.position.y - 0.1;          
+            etatcol = computeCollision(objectMandibule,objectMaxillaireSimplified);
+            // objectMandibule.children[0].material.wireframe = true;
+            //console.log("dans la boucle de la mort");
+            if (cptInter > 60)
+            
+            {
+                etatcol = false;
+            }
+   
+        }
+    while (etatcol == true );
+
+    });
+
 
     goutObj.onChange( function (){
         addGouttiere();
@@ -261,8 +287,8 @@ function init() {
      * Link of mandibular and maxilla
      * @type {string}
      */
-    var linkMandibule = "bohn_Mandibule1000.obj";
-    var linkMaxillaire = "bohn_Maxillaire1000.obj";
+    var linkMandibule = "mandibule1000.obj";
+    var linkMaxillaire = "maxillaire1000.obj";
     /**
      * Function Load Object
      * @return THREE.Object3Ds
@@ -283,7 +309,7 @@ function init() {
         objectMaxillaire.children[0].material.wireframe = true;
         objectMaxillaire.children[0].visible = false;
         objectMaxillaireSimplified = drawIntersectionPoints(tableOfPlane,objectMaxillaire.children[0]);
-
+    
         //intersection(objectMaxillaire.children[0], objectMandibule.children[0]);
         //objectMaxillaireSimplified = new THREE.EdgesHelper( objectMaxillaire.children[0], 0x00ffff );
         //objectMaxillaireSimplified.material.linewidth = 2; // optional
@@ -351,7 +377,6 @@ function init() {
         objectMaxillaireSimplified = drawIntersectionPoints(tableOfPlane[i],objectMaxillaire.children[0]);
     });*/
     
-
         function onDocumentMouseDown(event) {
   
         event.preventDefault();
@@ -384,7 +409,6 @@ function render() {
  * @param {*obj} objectFixe 
  */
 
-
 /**
  * @return void
  * @param objectMaxillaire
@@ -394,9 +418,13 @@ function render() {
 var nbCollision = 0;
 
 function computeCollision(objectMandibule,objectMaxillaire) { 
-
+   
     //console.log(objectMaxillaire);
+   // objectMandibule.position.y = objectMandibule.children[0].position.y;
     objectMandibule.children[0].material.wireframe = false;
+    objectMandibule.children[0].position.y = objectMandibule.position.y;
+    etatcol = false;
+    console.log(objectMandibule.children[0].position.y);
     var tableObjectMandibule = [];
     tableObjectMandibule.push(objectMaxillaire);
     for (var vertexIndex = 0; vertexIndex < objectMandibule.children[0].geometry.vertices.length; vertexIndex++) {
@@ -407,14 +435,20 @@ function computeCollision(objectMandibule,objectMaxillaire) {
         var collisionResults = ray.intersectObjects(tableObjectMandibule);
        // console.log("Vertex index: " + vertexIndex);
 
-if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
+        if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
                     objectMandibule.children[0].updateMatrix();
                     objectMandibule.children[0].material.wireframe = true;
-				} 
+                    etatcol = true;   
         }
+
+    }
+     console.log(etatcol);
+     return etatcol;
 }
-
-
 
 init();
 render();
+
+
+
+

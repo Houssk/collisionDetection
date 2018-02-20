@@ -267,7 +267,7 @@ function Distance(x1, y1, x2, y2) {
         extrudeSettings.extrudePath = spline;
 			var tube = new THREE.TubeGeometry(extrudeSettings.extrudePath, 5, 8, 8, false);
             gout = new THREE.Mesh(tube, new THREE.MeshLambertMaterial( { color: 0x00ff11} ));
-            var boxgeo = new THREE.BoxGeometry(80, 4, distanceZ+10);
+            var boxgeo = new THREE.BoxGeometry(80, 3, distanceZ+10);
             var box = new THREE.Mesh(boxgeo,new THREE.MeshLambertMaterial( { color: 0x00ff11} ));
             box.position.y= mandibule.position.y;
             box.position.z = mandibule.position.z + 20;
@@ -287,5 +287,5 @@ function Distance(x1, y1, x2, y2) {
             scene.remove(particle3D[1]);
             scene.remove(particle3D[2]);
            // scene.remove(particle3D[3]);
-            saveContourSTL( scene, "gouttiere bohn 1000" );
+            saveContourSTL( scene, "gouttiere" );
     }
