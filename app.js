@@ -120,10 +120,10 @@ function init()
   
     var loader2 = new THREE.OBJLoader();
     //var cheminMaxillaire="maxillaireInitial_Bohn_2000.obj";
-    var cheminMaxillaire="maxillaire1000.obj";
+    var cheminMaxillaire="CMF-0004 - Maxillaire final.obj";
     var loader = new THREE.OBJLoader();
    // var cheminMand= "burdin_ruffio.obj";
-    var cheminMand= "mandibule1000.obj";
+    var cheminMand= "CMF-0004 - Mandibule finale.obj";
 
     loader2.load(cheminMaxillaire,function(object){
         object.traverse(function(child){
@@ -203,12 +203,13 @@ function Distance(x1, y1, x2, y2) {
         var A = Distance(particle3D[1].position.z,sphere.position.y,sphere.position.z,sphere.position.y);
         inclinaison = Math.acos(A/B);
         var distanceX = Distance(particle3D[2].position.x ,particle3D[2].position.y , particle3D[0].position.x, particle3D[0].position.y);
-       
+
           
           parent.add(sphere);
           spline = new THREE.QuadraticBezierCurve3(
             new THREE.Vector3(particle3D[0].position.x ,particle3D[0].position.y,particle3D[0].position.z),
-            new THREE.Vector3( particle3D[1].position.x ,particle3D[1].position.y,particle3D[1].position.z +40),
+            //new THREE.Vector3( particle3D[1].position.x ,particle3D[1].position.y -42,particle3D[1].position.z), // z + 40 Nimeskern
+            new THREE.Vector3( particle3D[1].position.x ,particle3D[1].position.y,particle3D[1].position.z + 40), 
             new THREE.Vector3(particle3D[2].position.x ,particle3D[2].position.y,particle3D[2].position.z  )    
             );
 
@@ -219,25 +220,29 @@ function Distance(x1, y1, x2, y2) {
         wall.add(curveObject);
        
         extrudeSettings.extrudePath = spline;
-			var tube = new THREE.TubeGeometry(extrudeSettings.extrudePath, 15, 5, 15, false);
+			var tube = new THREE.TubeGeometry(extrudeSettings.extrudePath,15, 5, 15, false);
             gout = new THREE.Mesh(tube, new THREE.MeshLambertMaterial( { color: 0x00ff11} ));
-            var boxgeo = new THREE.BoxGeometry(distanceX +5, 2, distanceZ +15);
+            var boxgeo = new THREE.BoxGeometry(distanceX +15, 3, distanceZ +30);
             var box = new THREE.Mesh(boxgeo,new THREE.MeshLambertMaterial( { color: 0x00ff11} ));
           //  box.position.copy(sphere.position);
             //box.rotation.x = inclinaison;
             console.log(box.position);
             console.log(gout.position);
-            box.rotation.x = inclinaison;
+            box.rotation.x =  - 0.1//inclinaison;
+            console.log(inclinaison);
             box.position.copy(sphere.position);
+            box.position.y = box.position.y+6.5;
         
             gout.add(box); 
            
            wall.add(gout);
+          // wall.add(box);
            //gout.add(box);
-           gouttiere = intersection(box,gout);
+             gouttiere = intersection(box,gout);
+           //gouttiere = box;
            gouttiere.name == 'gouttiere';
            parent.add(gouttiere);
-          gout.remove(box);
+           gout.remove(box);
             resultUnion = union(MovingCube,wall);
             subtract(gouttiere,resultUnion);
            //subtract(gouttiere,wall);
@@ -252,7 +257,7 @@ function Distance(x1, y1, x2, y2) {
             wall.remove(particle3D[1]);
             wall.remove(particle3D[2]);
            // parent.remove(particle3D[3]);
-            saveContourSTL( scene, "gouttiere realini" );
+            saveContourSTL( scene, "Gouttiere finale" );
     }
 
 
